@@ -6,6 +6,8 @@ import { getSoundFullName, formatAudioTime } from "../utils/formatting";
 export default function AudioViewer() {
   const source = useSoundStore((s) => s.source);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -23,6 +25,26 @@ export default function AudioViewer() {
   useEffect(() => {
     window.localStorage.setItem("ss-audio-muted", isMuted ? "1" : "0");
   }, [isMuted]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || audioCtxRef.current) return;
+
+    const ctx = new AudioContext();
+    const mediaSource = ctx.createMediaElementSource(audio);
+    const gain = ctx.createGain();
+    mediaSource.connect(gain);
+    gain.connect(ctx.destination);
+
+    audioCtxRef.current = ctx;
+    gainNodeRef.current = gain;
+  }, []);
+
+  useEffect(() => {
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = source.audioVolumeAdjustmentFactor ?? 1;
+    }
+  }, [source.audioVolumeAdjustmentFactor]);
 
   useEffect(() => {
     const audio = audioRef.current;

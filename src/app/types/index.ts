@@ -4,6 +4,7 @@ export interface AmbientConditionInfo {
   title: string;
   subtitle: string;
   description: string;
+  icon: string;
 }
 
 export interface Noise {
@@ -30,4 +31,5 @@ export interface AudioParticipant {
   noise: Noise;
   listens_to: AudioParticipant[];
   detections: Record<string, DetectionData>;
+  audioVolumeAdjustmentFactor?: number;
 }

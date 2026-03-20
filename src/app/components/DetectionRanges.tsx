@@ -13,6 +13,7 @@ import type { AmbientCondition, AudioParticipant } from "../types";
 import { useSoundStore } from "../store/useSoundStore";
 import { listeners } from "../data/participants";
 import { formatDistance } from "../utils/formatting";
+import { useIsMobile } from "./ui/use-mobile";
 
 const DOMAIN_MIN = 0.01;
 const DOMAIN_MAX = 100;
@@ -146,10 +147,11 @@ export default function DetectionRanges() {
   const source = useSoundStore((s) => s.source);
   const setListener = useSoundStore((s) => s.setListener);
   const setSource = useSoundStore((s) => s.setSource);
+  const isMobile = useIsMobile();
 
   const currentKey = `${listener.id}/${source.id}`;
 
-  const chartGroups = listeners.map((l) => ({
+  const allGroups = listeners.map((l) => ({
     listener: l,
     data: getPairsForListener(l.id).map((item): ChartRecord => {
       const currentDistance = item[condition];
@@ -163,6 +165,10 @@ export default function DetectionRanges() {
       };
     }),
   }));
+
+  const chartGroups = isMobile
+    ? allGroups.filter((g) => g.listener.id === listener.id)
+    : allGroups;
 
   const handleBarClick = useCallback(
     (data: any) => {
@@ -267,6 +273,21 @@ export default function DetectionRanges() {
               className="flex flex-col min-h-0"
               style={{ flex: group.data.length }}
             >
+              {isMobile && (
+                <div
+                  className="shrink-0 flex justify-around py-1"
+                  style={showAxis ? { marginLeft: 50 } : undefined}
+                >
+                  {group.data.map((d) => (
+                    <img
+                      key={d.key}
+                      src={d.source.icon}
+                      alt={d.source.name}
+                      className="w-8 h-8 object-contain"
+                    />
+                  ))}
+                </div>
+              )}
               <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={group.data} barCategoryGap="20%">

@@ -37,6 +37,7 @@ export const harborSeal: AudioParticipant = {
   noise: { audioFile: harborSealRoarAudio, spectrogram: harborSealRoarSpectrogram },
   listens_to: [],
   detections: {},
+  audioVolumeAdjustmentFactor: 2,
 };
 
 export const bottlenoseDolphin: AudioParticipant = {
