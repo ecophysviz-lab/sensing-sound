@@ -26,7 +26,7 @@ export default function Home() {
 
       <div className="flex flex-row flex-1 overflow-hidden">
         {/* LeftPanel -- desktop only */}
-        <div className="hidden md:flex w-1/4 flex-col gap-4 p-4 overflow-y-auto">
+        <div className="hidden md:flex w-1/4 flex-col gap-4 p-4 overflow-y-auto" style={{ minWidth: 265, minHeight: 730 }}>
           <ConditionSelector />
           <AudioParticipantSelector variant="listener" />
           <AudioParticipantSelector variant="source" />
@@ -36,18 +36,20 @@ export default function Home() {
         <div className="flex-1 flex flex-col gap-4 p-4 min-h-0" style={{ flex: "1 1 0%" }}>
           {(!isMobile || mobileView === "scene") && (
             <>
-              <div style={{ flex: "45 1 0%" }} className="min-h-0">
+              <div style={{ flex: isMobile ? "45 1 0%" : "50 1 0%" }} className="min-h-0">
                 <SceneViewer />
               </div>
-              <div style={{ flex: "15 1 0%" }} className="min-h-0">
-                <AudioViewer />
-              </div>
+              {isMobile && (
+                <div style={{ flex: "15 1 0%" }} className="min-h-0">
+                  <AudioViewer />
+                </div>
+              )}
             </>
           )}
 
           {(!isMobile || mobileView === "range") && (
             <div
-              style={!isMobile ? { flex: "40 1 0%" } : { flex: "1 1 0%" }}
+              style={!isMobile ? { flex: "50 1 0%" } : { flex: "1 1 0%" }}
               className="flex flex-col md:flex-row gap-4 min-h-0"
             >
               <div className="w-full md:w-3/4 min-h-0 flex-1">

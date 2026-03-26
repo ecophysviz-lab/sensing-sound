@@ -36,17 +36,17 @@ export default function Navigation() {
     if (mobileMenuTarget === "condition") {
       return conditionOrder
         .filter((c) => c !== oceanCondition)
-        .map((c) => ({ key: c, icon: conditionInfo[c].icon, onSelect: () => { setOceanCondition(c); setMobileMenuTarget(null); } }));
+        .map((c) => ({ key: c, icon: conditionInfo[c].icon, label: conditionInfo[c].title, onSelect: () => { setOceanCondition(c); setMobileMenuTarget(null); } }));
     }
     if (mobileMenuTarget === "listener") {
       return listeners
         .filter((p) => p.id !== listener.id)
-        .map((p) => ({ key: p.id, icon: p.icon, onSelect: () => { setListener(p); setMobileMenuTarget(null); } }));
+        .map((p) => ({ key: p.id, icon: p.icon, label: p.name, onSelect: () => { setListener(p); setMobileMenuTarget(null); } }));
     }
     if (mobileMenuTarget === "source") {
       return sources
         .filter((p) => p.id !== source.id)
-        .map((p) => ({ key: p.id, icon: p.icon, onSelect: () => { setSource(p); setMobileMenuTarget(null); } }));
+        .map((p) => ({ key: p.id, icon: p.icon, label: p.name, onSelect: () => { setSource(p); setMobileMenuTarget(null); } }));
     }
     return [];
   })();
@@ -95,14 +95,15 @@ export default function Navigation() {
       >
         <div className="overflow-hidden">
           <div className="flex items-center justify-center gap-3 px-4 pt-1">
-            {optionIcons.map(({ key, icon, onSelect }) => (
+            {optionIcons.map(({ key, icon, label, onSelect }) => (
               <button
                 key={key}
                 type="button"
                 onClick={onSelect}
-                className="rounded-lg bg-white/10 hover:bg-white/25 p-1.5 transition-colors"
+                className="flex flex-col items-center gap-1 rounded-lg bg-white/10 hover:bg-white/25 p-1.5 transition-colors"
               >
                 <img src={icon} alt="" className="w-10 h-10 object-contain" />
+                <span className="text-white/70 text-[10px] uppercase tracking-wide leading-tight">{label}</span>
               </button>
             ))}
           </div>

@@ -70,7 +70,7 @@ export default function ConditionSelector() {
       </div>
       <div className="flex gap-3 items-stretch" style={{ flex: "0 0 80%" }}>
         <div className="w-10 flex flex-col items-center">
-          <div className="text-[9px] uppercase tracking-wide text-white/70 mb-1">Volume</div>
+          <div className="text-[9px] uppercase tracking-wide text-white/70 mb-1">NOISE</div>
           <div className="relative flex-1 w-full">
             <input
               type="range"

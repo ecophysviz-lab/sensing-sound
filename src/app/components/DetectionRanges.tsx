@@ -12,6 +12,7 @@ import {
 import type { AmbientCondition, AudioParticipant } from "../types";
 import { useSoundStore } from "../store/useSoundStore";
 import { listeners } from "../data/participants";
+import { conditionBarColor, conditionBarColorDim } from "../data/conditions";
 import { formatDistance } from "../utils/formatting";
 import { useIsMobile } from "./ui/use-mobile";
 
@@ -20,15 +21,6 @@ const DOMAIN_MAX = 100;
 const LOG_MIN = Math.log(DOMAIN_MIN);
 const LOG_RANGE = Math.log(DOMAIN_MAX) - LOG_MIN;
 const Y_TICKS = [0.01, 0.1, 1, 10, 100];
-
-const REFERENCE_COLOR = "rgba(45, 212, 191, 0.3)";
-const ACTIVE_COLOR = "rgba(249, 115, 22, 0.9)";
-const CONDITION_COLORS: Record<AmbientCondition, string> = {
-  calm: "rgba(45, 212, 191, 0.6)",
-  winter: "rgba(234, 179, 8, 0.6)",
-  storm: "rgba(220, 38, 38, 0.6)",
-  cruiseShip: "rgba(127, 29, 29, 0.6)",
-};
 
 interface BarEntry {
   key: string;
@@ -196,15 +188,16 @@ export default function DetectionRanges() {
     const scale = maxLogFrac > 0 ? height / maxLogFrac : 0;
     const calmH = Math.max(0, scale * calmLogFrac);
     const currentH = Math.max(0, scale * currentLogFrac);
-    const barColor = isActive ? ACTIVE_COLOR : CONDITION_COLORS[condition];
+    const barColor = conditionBarColor[condition];
 
     let percentLabel = null;
     if (condition !== "calm" && calmDistance > currentDistance) {
       const pct = (((calmDistance - currentDistance) / calmDistance) * 100).toFixed(0);
+      const labelY = baseline - 8;
       percentLabel = (
         <text
           x={x + width / 2}
-          y={y - 6}
+          y={labelY}
           textAnchor="middle"
           fill="white"
           fontSize={10}
@@ -217,7 +210,7 @@ export default function DetectionRanges() {
 
     return (
       <g style={{ cursor: "pointer" }}>
-        <rect x={x} y={baseline - calmH} width={width} height={calmH} fill={REFERENCE_COLOR} rx={3} ry={3} />
+        <rect x={x} y={baseline - calmH} width={width} height={calmH} fill={conditionBarColorDim.calm} rx={3} ry={3} />
         <rect x={x} y={baseline - currentH} width={width} height={currentH} fill={barColor} rx={3} ry={3} />
         {isActive && (
           <rect
@@ -271,26 +264,24 @@ export default function DetectionRanges() {
             <div
               key={group.listener.id}
               className="flex flex-col min-h-0"
-              style={{ flex: group.data.length }}
+              style={{ flex: group.data.length, paddingTop: 12 }}
             >
-              {isMobile && (
-                <div
-                  className="shrink-0 flex justify-around py-1"
-                  style={showAxis ? { marginLeft: 50 } : undefined}
-                >
-                  {group.data.map((d) => (
-                    <img
-                      key={d.key}
-                      src={d.source.icon}
-                      alt={d.source.name}
-                      className="w-8 h-8 object-contain"
-                    />
-                  ))}
-                </div>
-              )}
+              <div
+                className="shrink-0 flex justify-around py-1"
+                style={showAxis ? { marginLeft: 50 } : undefined}
+              >
+                {group.data.map((d) => (
+                  <img
+                    key={d.key}
+                    src={d.source.icon}
+                    alt={d.source.name}
+                    className={`object-contain transition-all duration-200 ${isMobile ? "w-10 h-10" : "w-7 h-7"} ${d.source.id === source.id ? "opacity-100 scale-110" : "opacity-40"}`}
+                  />
+                ))}
+              </div>
               <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={group.data} barCategoryGap="20%">
+                  <BarChart data={group.data} barCategoryGap="20%" margin={{ top: 18 }}>
                     <XAxis dataKey="key" hide />
                     <YAxis
                       scale="log"

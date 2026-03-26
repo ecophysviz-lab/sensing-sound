@@ -108,20 +108,6 @@ export default function HearingRangeViewer() {
                   />
 
                   <div
-                    className="absolute left-1/2 -translate-x-1/2 -translate-y-[130%] whitespace-nowrap rounded-full border border-white/30 bg-white/10 px-2 py-0.5 text-[10px] font-semibold"
-                    style={{ top: `${top}%` }}
-                  >
-                    {item.highLabel}
-                  </div>
-
-                  <div
-                    className="absolute left-1/2 -translate-x-1/2 translate-y-[35%] whitespace-nowrap rounded-full border border-white/30 bg-white/10 px-2 py-0.5 text-[10px] font-semibold"
-                    style={{ top: `${bottom}%` }}
-                  >
-                    {item.lowLabel}
-                  </div>
-
-                  <div
                     className={`absolute whitespace-nowrap rounded-full border bg-black/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
                       isActive ? "border-white text-white" : "border-white/20 text-white/90"
                     }`}

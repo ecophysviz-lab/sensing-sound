@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import type { AudioParticipant } from "../types";
 import { useSoundStore } from "../store/useSoundStore";
-import { listeners, sources } from "../data/participants";
+import { listeners } from "../data/participants";
 import { formatAnimalLabel, getSoundFullName } from "../utils/formatting";
 import listenerIcon from "@/assets/ca9fb87cf475c6320024953a6c99f360a8bb7fa4.png";
 import soundIcon from "@/assets/fdfd2fb83371a16d3a6b5ce24d5901f66d00b810.png";
@@ -35,8 +35,9 @@ function getCarouselWindow<T>(items: T[], centerIndex: number, radius = 2): T[] 
 export default function AudioParticipantSelector({ variant }: AudioParticipantSelectorProps) {
   const selected = useSoundStore((s) => (variant === "listener" ? s.listener : s.source));
   const setSelected = useSoundStore((s) => (variant === "listener" ? s.setListener : s.setSource));
+  const listener = useSoundStore((s) => s.listener);
 
-  const items = variant === "listener" ? listeners : sources;
+  const items = variant === "listener" ? listeners : listener.listens_to;
   const icon = variant === "listener" ? listenerIcon : soundIcon;
   const label = variant === "listener" ? "SELECT LISTENER" : "SELECT SOUND";
   const selectedClass = variant === "listener" ? "ss-selected-listener" : "ss-selected-sound";
@@ -81,6 +82,12 @@ export default function AudioParticipantSelector({ variant }: AudioParticipantSe
 
     scheduleOffsetReset();
   };
+
+  useEffect(() => {
+    if (variant === "source" && !items.some((p) => p.id === selected.id)) {
+      if (items.length > 0) setSelected(items[0]);
+    }
+  }, [listener, variant, items, selected.id, setSelected]);
 
   useEffect(() => {
     setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
