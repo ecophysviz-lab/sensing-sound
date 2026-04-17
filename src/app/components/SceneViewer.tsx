@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import type { AmbientCondition, AudioParticipant } from "../types";
 import { useSoundStore } from "../store/useSoundStore";
@@ -185,7 +185,7 @@ function ParticipantIcon({
   );
 }
 
-export default function SceneViewer() {
+export default function SceneViewer({ mobileToggle }: { mobileToggle?: ReactNode } = {}) {
   const listener = useSoundStore((s) => s.listener);
   const source = useSoundStore((s) => s.source);
   const condition = useSoundStore((s) => s.oceanCondition);
@@ -260,11 +260,13 @@ export default function SceneViewer() {
 
       <div className="absolute inset-0 ss-home-overlay" />
 
+      {mobileToggle && (
+        <div className="absolute top-3 left-3 z-20">{mobileToggle}</div>
+      )}
+
       <div className="relative h-full p-8">
         <ParticipantIcon participant={listener} side="left" />
-
         <DistancePill condition={condition} distance={distance} />
-
         <ParticipantIcon
           participant={source}
           side="right"
