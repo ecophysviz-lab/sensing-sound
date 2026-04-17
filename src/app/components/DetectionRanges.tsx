@@ -9,12 +9,37 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { AmbientCondition, AudioParticipant } from "../types";
+import type { AmbientCondition, AudioParticipant, PanelCopyMap } from "../types";
 import { useSoundStore } from "../store/useSoundStore";
 import { listeners } from "../data/participants";
 import { conditionBarColor, conditionBarColorDim } from "../data/conditions";
 import { formatDistance } from "../utils/formatting";
+import { usePanelCopy } from "../hooks/useSheetCopy";
 import { useIsMobile } from "./ui/use-mobile";
+
+const DETECTION_FALLBACK: Record<string, string> = {
+  Title: "Listening Ranges",
+  Subtitle: "Maximum listening range under selected ocean conditions",
+  "Axis label": "Listening ranges (km)",
+  "From calm suffix": "from calm",
+};
+
+const SOUND_FALLBACK: Record<string, string> = {
+  "Option 1": "Rockfish Grunt",
+  "Option 2": "Harbor Seal Roar",
+  "Option 3": "Dolphin Whistle",
+  "Option 4": "Killer Whale Call",
+};
+
+function makeDetectionT(copy: PanelCopyMap) {
+  return (key: string) => copy[key] || DETECTION_FALLBACK[key] || "";
+}
+
+function soundLabel(copy: PanelCopyMap, participant: AudioParticipant): string {
+  const key = participant.sourceCopyKey;
+  if (!key) return "";
+  return copy[key] || SOUND_FALLBACK[key] || "";
+}
 
 const DOMAIN_MIN = 0.01;
 const DOMAIN_MAX = 100;
@@ -91,7 +116,7 @@ function getPairsForListener(listenerId: string): BarEntry[] {
   return layeredData.filter((e) => e.listener.id === listenerId);
 }
 
-function DetectionRangesHeader() {
+function DetectionRangesHeader({ t }: { t: (key: string) => string }) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [iconRect, setIconRect] = useState<DOMRect | null>(null);
   const iconRef = useRef<HTMLDivElement>(null);
@@ -106,7 +131,7 @@ function DetectionRangesHeader() {
   return (
     <div className="px-4 py-4 flex-shrink-0 flex items-center gap-2">
       <div className="ss-accent-text text-sm font-bold tracking-wider uppercase">
-        Detection Ranges
+        {t("Title")}
       </div>
       <div
         ref={iconRef}
@@ -124,7 +149,7 @@ function DetectionRangesHeader() {
               transform: "translateX(-50%)",
             }}
           >
-            Maximum distance for sound perception under selected ocean conditions
+            {t("Subtitle")}
           </div>,
           document.body,
         )}
@@ -137,10 +162,13 @@ export default function DetectionRanges() {
   const condition = useSoundStore((s) => s.oceanCondition);
   const listener = useSoundStore((s) => s.listener);
   const source = useSoundStore((s) => s.source);
-  const language = useSoundStore((s) => s.language);
   const setListener = useSoundStore((s) => s.setListener);
   const setSource = useSoundStore((s) => s.setSource);
   const isMobile = useIsMobile();
+
+  const { copy: detectionCopy } = usePanelCopy("Detection Ranges");
+  const { copy: soundCopy } = usePanelCopy("Select Sound");
+  const t = makeDetectionT(detectionCopy);
 
   const currentKey = `${listener.id}/${source.id}`;
 
@@ -240,11 +268,11 @@ export default function DetectionRanges() {
       : null;
     return (
       <div className="bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg border border-white/10">
-        <div className="font-semibold">{data.source.name[language]}</div>
+        <div className="font-semibold">{soundLabel(soundCopy, data.source)}</div>
         <div>{formatDistance(data.currentDistance)}</div>
         {condition !== "calm" && pct !== null && (
           <div className="text-teal-300 text-[9px] mt-0.5">
-            -{pct}% from calm
+            -{pct}% {t("From calm suffix")}
           </div>
         )}
       </div>
@@ -254,7 +282,7 @@ export default function DetectionRanges() {
   return (
     <div className="ss-panel-gradient backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden flex h-full flex-col">
       <div className="basis-[15%] shrink-0">
-        <DetectionRangesHeader />
+        <DetectionRangesHeader t={t} />
       </div>
 
       <div className="basis-[85%] min-h-0 flex px-5 pb-5 gap-2">
@@ -275,7 +303,7 @@ export default function DetectionRanges() {
                   <img
                     key={d.key}
                     src={d.source.icon}
-                    alt={d.source.name.en}
+                    alt=""
                     className={`object-contain transition-all duration-200 ${isMobile ? "w-10 h-10" : "w-7 h-7"} ${d.source.id === source.id ? "opacity-100 scale-110" : "opacity-40"}`}
                   />
                 ))}
@@ -295,6 +323,13 @@ export default function DetectionRanges() {
                       tick={{ fill: "rgba(255,255,255,0.9)", fontSize: 10 }}
                       width={showAxis ? 50 : 0}
                       hide={!showAxis}
+                      label={showAxis ? {
+                        value: t("Axis label"),
+                        angle: -90,
+                        position: "insideLeft",
+                        offset: 10,
+                        style: { fill: "rgba(255,255,255,0.75)", fontSize: 10, textAnchor: "middle" },
+                      } : undefined}
                     />
                     <Tooltip
                       content={renderTooltip}
@@ -315,7 +350,7 @@ export default function DetectionRanges() {
               >
                 <img
                   src={group.listener.icon}
-                  alt={group.listener.name.en}
+                  alt=""
                   className="w-16 h-16 object-contain"
                 />
               </div>

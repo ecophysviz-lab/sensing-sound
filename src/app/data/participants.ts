@@ -15,10 +15,15 @@ import dolphinWhistleSpectrogram from "@/assets/Dolphin-whistle_spectrogram.png"
 import killerWhaleCallSpectrogram from "@/assets/Killer-whale_call_spectrogram.png";
 import harborSealRoarSpectrogram from "@/assets/Harbor-seal_roar_spectrogram.png";
 
+// Copy keys mirror `Item name` columns in the Google Sheet:
+//   `Select Listener` panel lists listeners as Option 1..3 in the order
+//   harbor seal, bottlenose dolphin, killer whale.
+//   `Select Sound` panel lists sources as Option 1..4 in the order
+//   rockfish grunt, harbor seal roar, dolphin whistle, killer whale call.
+
 export const rockfish: AudioParticipant = {
   id: "rockfish",
-  name: { en: "Rockfish", es: "Rockfish" },
-  soundName: { en: "Rockfish Grunt", es: "Gruñido de rockfish" },
+  sourceCopyKey: "Option 1",
   icon: rockfishIcon,
   scientificName: "Sebastes spp.",
   source: true,
@@ -30,8 +35,8 @@ export const rockfish: AudioParticipant = {
 
 export const harborSeal: AudioParticipant = {
   id: "harbor-seal",
-  name: { en: "Harbor Seal", es: "Foca de puerto" },
-  soundName: { en: "Harbor Seal Roar", es: "Rugido de foca de puerto" },
+  listenerCopyKey: "Option 1",
+  sourceCopyKey: "Option 2",
   icon: harborSealIcon,
   scientificName: "Phoca vitulina",
   source: true,
@@ -44,8 +49,8 @@ export const harborSeal: AudioParticipant = {
 
 export const bottlenoseDolphin: AudioParticipant = {
   id: "bottlenose-dolphin",
-  name: { en: "Bottlenose Dolphin", es: "Delfín nariz de botella" },
-  soundName: { en: "Dolphin Whistle", es: "Silbido de delfín" },
+  listenerCopyKey: "Option 2",
+  sourceCopyKey: "Option 3",
   icon: dolphinIcon,
   scientificName: "Tursiops truncatus",
   source: true,
@@ -57,8 +62,8 @@ export const bottlenoseDolphin: AudioParticipant = {
 
 export const killerWhale: AudioParticipant = {
   id: "killer-whale",
-  name: { en: "Killer Whale", es: "Orca" },
-  soundName: { en: "Killer Whale Call", es: "Llamado de orca" },
+  listenerCopyKey: "Option 3",
+  sourceCopyKey: "Option 4",
   icon: killerWhaleIcon,
   scientificName: "Orcinus orca",
   source: true,

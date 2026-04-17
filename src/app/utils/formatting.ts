@@ -1,4 +1,4 @@
-import type { AudioParticipant, AmbientCondition, Language } from "../types";
+import type { AudioParticipant, AmbientCondition } from "../types";
 import { allParticipants } from "../data/participants";
 
 export function formatDistance(dist: number): string {
@@ -6,42 +6,6 @@ export function formatDistance(dist: number): string {
     return `${dist.toFixed(2)} km`;
   }
   return `${(dist * 1000).toFixed(0)} m`;
-}
-
-export function formatAnimalLabel(name: string): string {
-  if (!name) return name;
-  const lower = name.toLowerCase();
-  return `${lower.charAt(0).toUpperCase()}${lower.slice(1)}`;
-}
-
-export function getSoundDescriptor(participant: AudioParticipant): string {
-  switch (participant.id) {
-    case "rockfish":
-      return "grunt";
-    case "harbor-seal":
-      return "roar";
-    case "bottlenose-dolphin":
-      return "whistle";
-    case "killer-whale":
-      return "call";
-    default:
-      return "sound";
-  }
-}
-
-export function getSoundFullName(participant: AudioParticipant, language: Language = "en"): string {
-  if (participant.soundName) return participant.soundName[language];
-  return participant.name[language];
-}
-
-export function getConditionLabel(cond: AmbientCondition): string {
-  const labels: Record<AmbientCondition, string> = {
-    calm: "Calm Summer",
-    winter: "Wind & Waves (Winter)",
-    storm: "Storm Event",
-    cruiseShip: "Cruise Ship Noise",
-  };
-  return labels[cond];
 }
 
 export function formatAudioTime(seconds: number): string {

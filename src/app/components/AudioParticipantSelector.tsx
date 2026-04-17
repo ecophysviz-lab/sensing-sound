@@ -2,13 +2,25 @@ import { useState, useRef, useEffect } from "react";
 import type { AudioParticipant } from "../types";
 import { useSoundStore } from "../store/useSoundStore";
 import { listeners } from "../data/participants";
-import { formatAnimalLabel, getSoundFullName } from "../utils/formatting";
 import { usePanelCopy } from "../hooks/useSheetCopy";
 import listenerIcon from "@/assets/ca9fb87cf475c6320024953a6c99f360a8bb7fa4.png";
 import soundIcon from "@/assets/fdfd2fb83371a16d3a6b5ce24d5901f66d00b810.png";
 
-const LISTENER_FALLBACK = { Title: "SELECT LISTENER" };
-const SOUND_FALLBACK = { Title: "SELECT SOUND" };
+const LISTENER_FALLBACK: Record<string, string> = {
+  Title: "SELECT LISTENER",
+  "Option 1": "Harbor Seal",
+  "Option 2": "Bottlenose Dolphin",
+  "Option 3": "Killer Whale",
+  "Swipe hint": "Swipe to rotate",
+};
+const SOUND_FALLBACK: Record<string, string> = {
+  Title: "SELECT SOUND",
+  "Option 1": "Rockfish Grunt",
+  "Option 2": "Harbor Seal Roar",
+  "Option 3": "Dolphin Whistle",
+  "Option 4": "Killer Whale Call",
+  "Swipe hint": "Swipe to rotate",
+};
 
 interface AudioParticipantSelectorProps {
   variant: "listener" | "source";
@@ -44,7 +56,7 @@ export default function AudioParticipantSelector({ variant }: AudioParticipantSe
   const panelName = variant === "listener" ? "Select Listener" : "Select Sound";
   const fallback = variant === "listener" ? LISTENER_FALLBACK : SOUND_FALLBACK;
   const { copy, isLoading } = usePanelCopy(panelName);
-  const t = (key: string) => copy[key] || fallback[key as keyof typeof fallback] || "";
+  const t = (key: string) => copy[key] || fallback[key] || "";
 
   const items = variant === "listener" ? listeners : listener.listens_to;
   const icon = variant === "listener" ? listenerIcon : soundIcon;
@@ -106,10 +118,9 @@ export default function AudioParticipantSelector({ variant }: AudioParticipantSe
     };
   }, []);
 
-  const language = useSoundStore((s) => s.language);
-
   const getItemLabel = (item: AudioParticipant): string => {
-    return variant === "source" ? getSoundFullName(item, language) : formatAnimalLabel(item.name[language]);
+    const key = variant === "source" ? item.sourceCopyKey : item.listenerCopyKey;
+    return key ? t(key) : "";
   };
 
   if (isLoading) {
@@ -164,7 +175,7 @@ export default function AudioParticipantSelector({ variant }: AudioParticipantSe
           })}
         </div>
         {isTouchDevice && (
-          <div className="text-[10px] text-white/65 text-center mt-1">Swipe to rotate</div>
+          <div className="text-[10px] text-white/65 text-center mt-1">{t("Swipe hint")}</div>
         )}
       </div>
     </div>

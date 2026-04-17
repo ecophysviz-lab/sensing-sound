@@ -12,10 +12,15 @@ export type PanelCopyMap = Record<string, string>;
 
 export type AmbientCondition = "calm" | "winter" | "storm" | "cruiseShip";
 
+export type ConditionCardNumber = 1 | 2 | 3 | 4;
+
 export interface AmbientConditionInfo {
-  title: { en: string; es: string };
-  subtitle: { en: string; es: string };
-  description: { en: string; es: string };
+  /**
+   * Position of this condition in the `Select Context` panel of the Google
+   * Sheet; used to resolve `Option N`, `Card N subtitle`, and
+   * `Card N description` copy keys.
+   */
+  cardNumber: ConditionCardNumber;
   icon: string;
 }
 
@@ -35,8 +40,16 @@ export interface DetectionData {
 
 export interface AudioParticipant {
   id: string;
-  name: { en: string; es: string };
-  soundName?: { en: string; es: string };
+  /**
+   * `Item name` under the `Select Listener` panel for this participant.
+   * `undefined` for participants that are not available as a listener.
+   */
+  listenerCopyKey?: string;
+  /**
+   * `Item name` under the `Select Sound` panel for this participant.
+   * `undefined` for participants that are not available as a sound source.
+   */
+  sourceCopyKey?: string;
   icon: string;
   scientificName: string;
   source: boolean;

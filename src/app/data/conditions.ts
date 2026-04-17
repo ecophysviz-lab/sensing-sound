@@ -37,29 +37,14 @@ export const conditionSelectedClass: Record<AmbientCondition, string> = {
   cruiseShip: "ss-selected-cruise",
 };
 
+// Card numbers mirror the `Select Context` panel in the Google Sheet:
+//   Option 1 / Card 1 ... = Calm Seas (summer)
+//   Option 2 / Card 2 ... = Wind & Waves (winter)
+//   Option 3 / Card 3 ... = Storm
+//   Option 4 / Card 4 ... = Cruise Ship
 export const conditionInfo: Record<AmbientCondition, AmbientConditionInfo> = {
-  calm: {
-    title: { en: "Calm Seas", es: "Mares en calma" },
-    subtitle: { en: "Summer", es: "Verano" },
-    description: { en: "Quiet seas increase the listening range", es: "Los mares tranquilos maximizan la distancia de escucha." },
-    icon: calmIcon,
-  },
-  winter: {
-    title: { en: "Wind & Waves", es: "Viento y olas" },
-    subtitle: { en: "Winter", es: "Invierno" },
-    description: { en: "Wind and waves decrease the listening range", es: "El oleaje superficial enmascara llamadas distantes." },
-    icon: winterIcon,
-  },
-  storm: {
-    title: { en: "Storm", es: "Tormenta" },
-    subtitle: { en: "Heavy wind and waves", es: "Viento y oleaje intensos" },
-    description: { en: "Loud environmental noise constrains hearing.", es: "El ruido ambiental de alta intensidad enmascara sonidos." },
-    icon: stormIcon,
-  },
-  cruiseShip: {
-    title: { en: "Cruise Ship", es: "Crucero" },
-    subtitle: { en: "Ship noise", es: "Ruido de barco" },
-    description: { en: "Ship noise restricts listening space.", es: "El zumbido del motor reduce el rango de audición." },
-    icon: cruiseShipIcon,
-  },
+  calm: { cardNumber: 1, icon: calmIcon },
+  winter: { cardNumber: 2, icon: winterIcon },
+  storm: { cardNumber: 3, icon: stormIcon },
+  cruiseShip: { cardNumber: 4, icon: cruiseShipIcon },
 };

@@ -1,47 +1,74 @@
 import { useSoundStore } from "../store/useSoundStore";
+import { usePanelCopy } from "../hooks/useSheetCopy";
+import { bottlenoseDolphin, harborSeal, killerWhale } from "../data/participants";
+import type { AudioParticipant } from "../types";
 
-const hearingRanges = [
+const HEARING_FALLBACK: Record<string, string> = {
+  Title: "Hearing Ranges",
+  Note: "No rockfish audiometry data.",
+  "Human - in air": "Human (In Air)",
+  "Human - in water": "Human (In Water)",
+};
+
+const LISTENER_FALLBACK: Record<string, string> = {
+  "Option 1": "Harbor Seal",
+  "Option 2": "Bottlenose Dolphin",
+  "Option 3": "Killer Whale",
+};
+
+type HearingRow =
+  | {
+      key: string;
+      highHz: number;
+      lowHz: number;
+      source: "listener";
+      participant: AudioParticipant;
+    }
+  | {
+      key: string;
+      highHz: number;
+      lowHz: number;
+      source: "local";
+      itemKey: "Human - in air" | "Human - in water";
+    };
+
+const hearingRanges: readonly HearingRow[] = [
   {
-    key: "bottlenose-dolphin",
-    name: "Bottlenose Dolphin",
+    key: bottlenoseDolphin.id,
     highHz: 146000,
     lowHz: 400,
-    highLabel: "146 kHz",
-    lowLabel: "400 Hz",
+    source: "listener",
+    participant: bottlenoseDolphin,
   },
   {
-    key: "killer-whale",
-    name: "Killer Whale",
+    key: killerWhale.id,
     highHz: 140000,
     lowHz: 200,
-    highLabel: "140 kHz",
-    lowLabel: "200 Hz",
+    source: "listener",
+    participant: killerWhale,
   },
   {
-    key: "harbor-seal",
-    name: "Harbor Seal",
+    key: harborSeal.id,
     highHz: 79000,
     lowHz: 90,
-    highLabel: "79 kHz",
-    lowLabel: "<100 Hz",
+    source: "listener",
+    participant: harborSeal,
   },
   {
     key: "human-air",
-    name: "Human (In Air)",
     highHz: 20000,
     lowHz: 20,
-    highLabel: "20 kHz",
-    lowLabel: "20 Hz",
+    source: "local",
+    itemKey: "Human - in air",
   },
   {
     key: "human-water",
-    name: "Human (In Water)",
     highHz: 10000,
     lowHz: 100,
-    highLabel: "10 kHz",
-    lowLabel: "100 Hz",
+    source: "local",
+    itemKey: "Human - in water",
   },
-] as const;
+];
 
 const axisTicks = [146000, 100000, 20000, 10000, 1000, 400, 200, 100, 20] as const;
 
@@ -64,10 +91,20 @@ function formatTick(hz: number): string {
 
 export default function HearingRangeViewer() {
   const listener = useSoundStore((s) => s.listener);
+  const { copy } = usePanelCopy("Hearing Ranges");
+  const { copy: listenerCopy } = usePanelCopy("Select Listener");
+  const t = (key: string) => copy[key] || HEARING_FALLBACK[key] || "";
+
+  const rowLabel = (row: HearingRow): string => {
+    if (row.source === "local") return t(row.itemKey);
+    const key = row.participant.listenerCopyKey;
+    if (!key) return "";
+    return listenerCopy[key] || LISTENER_FALLBACK[key] || "";
+  };
 
   return (
     <div className="h-full w-full rounded-2xl border border-white/15 bg-black/20 backdrop-blur-sm px-4 py-4 text-white">
-      <div className="ss-accent-text text-sm font-bold tracking-wider uppercase mb-5">Hearing Ranges</div>
+      <div className="ss-accent-text text-sm font-bold tracking-wider uppercase mb-5">{t("Title")}</div>
 
       <div className="grid grid-cols-[52px_1fr] gap-2 h-[calc(100%-64px)]">
         <div className="relative h-full">
@@ -117,7 +154,7 @@ export default function HearingRangeViewer() {
                       transform: "translate(-58%, -50%) rotate(-90deg)",
                     }}
                   >
-                    {item.name}
+                    {rowLabel(item)}
                   </div>
                 </div>
               );
@@ -126,7 +163,7 @@ export default function HearingRangeViewer() {
         </div>
       </div>
 
-      <div className="mt-2 text-[11px] italic text-white/80">No rockfish audiometry data.</div>
+      <div className="mt-2 text-[11px] italic text-white/80">{t("Note")}</div>
     </div>
   );
 }

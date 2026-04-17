@@ -1,11 +1,29 @@
 import { useState, useEffect, useRef } from "react";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { useSoundStore } from "../store/useSoundStore";
-import { getSoundFullName, formatAudioTime } from "../utils/formatting";
+import { usePanelCopy } from "../hooks/useSheetCopy";
+import { formatAudioTime } from "../utils/formatting";
+
+const SOUND_FALLBACK: Record<string, string> = {
+  "Option 1": "Rockfish Grunt",
+  "Option 2": "Harbor Seal Roar",
+  "Option 3": "Dolphin Whistle",
+  "Option 4": "Killer Whale Call",
+};
+
+const AUDIO_PANEL_FALLBACK: Record<string, string> = {
+  "Button state - muted": "Muted",
+  "Button state - unmuted": "Unmuted",
+  "Button - play": "Play",
+  "Button - pause": "Pause",
+};
 
 export default function AudioViewer() {
   const source = useSoundStore((s) => s.source);
-  const language = useSoundStore((s) => s.language);
+  const { copy: soundCopy } = usePanelCopy("Select Sound");
+  const { copy: audioCopy } = usePanelCopy("Audio Panel");
+  const audioT = (key: string) =>
+    audioCopy[key] || AUDIO_PANEL_FALLBACK[key] || "";
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
@@ -16,7 +34,8 @@ export default function AudioViewer() {
 
   const audioFile = source.noise.audioFile;
   const spectrogram = source.noise.spectrogram;
-  const soundName = getSoundFullName(source, language);
+  const soundKey = source.sourceCopyKey ?? "";
+  const soundName = soundCopy[soundKey] || SOUND_FALLBACK[soundKey] || "";
 
   useEffect(() => {
     const saved = window.localStorage.getItem("ss-audio-muted");
@@ -116,7 +135,9 @@ export default function AudioViewer() {
             className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white/15 hover:bg-white/25 text-white text-xs transition-colors"
           >
             {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-            <span>{isMuted ? "Muted" : "Unmuted"}</span>
+            <span>
+              {isMuted ? audioT("Button state - muted") : audioT("Button state - unmuted")}
+            </span>
           </button>
           <button
             type="button"
@@ -124,7 +145,9 @@ export default function AudioViewer() {
             className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white/15 hover:bg-white/25 text-white text-xs transition-colors"
           >
             {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            <span>{isPlaying ? "Pause" : "Play"}</span>
+            <span>
+              {isPlaying ? audioT("Button - pause") : audioT("Button - play")}
+            </span>
           </button>
         </div>
       </div>

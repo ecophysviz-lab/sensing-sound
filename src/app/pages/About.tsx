@@ -143,65 +143,73 @@ function AboutTheScience() {
   );
 }
 
+const IMPACT_FALLBACK = {
+  Title: "The Impact of Human Noise",
+  "Body 1":
+    "Human activities such as shipping and cruise traffic introduce persistent underwater sound that can reduce communication and detection distances.",
+  "Emphasis line":
+    "Compare calm and vessel contexts to evaluate relative masking effects.",
+  "Body 2":
+    "These comparisons help show how natural and anthropogenic noise can alter communication space and habitat quality.",
+};
+
 function ImpactOfHumanNoise() {
+  const { copy, isLoading } = usePanelCopy("The Impact of Human Noise");
+  const t = (key: string) =>
+    copy[key] || IMPACT_FALLBACK[key as keyof typeof IMPACT_FALLBACK] || "";
+
+  if (isLoading) return <SectionSkeleton />;
+
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
       <div className="flex items-center gap-3 mb-4">
         <Ship className="w-6 h-6 text-orange-400" />
-        <h2 className="text-2xl font-bold text-white">The Impact of Human Noise</h2>
+        <h2 className="text-2xl font-bold text-white">{t("Title")}</h2>
       </div>
       <div className="text-white/90 space-y-4 leading-relaxed">
-        <p>
-          Human activities such as shipping and cruise traffic introduce persistent underwater sound that can reduce communication and detection distances.
-        </p>
-        <p className="italic text-orange-300 text-lg">
-          Compare calm and vessel contexts to evaluate relative masking effects.
-        </p>
-        <p>
-          These comparisons help show how natural and anthropogenic noise can alter communication space and habitat quality.
-        </p>
+        <p>{t("Body 1")}</p>
+        <p className="italic text-orange-300 text-lg">{t("Emphasis line")}</p>
+        <p>{t("Body 2")}</p>
       </div>
     </div>
   );
 }
 
+const HOW_TO_EXPLORE_FALLBACK = {
+  Title: "How to Explore",
+  "Step 1":
+    "Choose your context: Compare calm, wind and waves, storms, and vessel noise.",
+  "Step 2":
+    "Pick your listener: Switch among harbor seal, bottlenose dolphin, and killer whale.",
+  "Step 3":
+    "Select a sound source: Test fish and marine mammal sounds across listeners.",
+  "Step 4":
+    "Observe results: Focus on relative range changes as noise conditions shift.",
+};
+
 function HowToExplore() {
+  const { copy, isLoading } = usePanelCopy("How to Explore");
+  const t = (key: string) =>
+    copy[key] ||
+    HOW_TO_EXPLORE_FALLBACK[key as keyof typeof HOW_TO_EXPLORE_FALLBACK] ||
+    "";
+
+  if (isLoading) return <SectionSkeleton lines={4} />;
+
+  const steps = ["Step 1", "Step 2", "Step 3", "Step 4"] as const;
+
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
-      <h2 className="text-2xl font-bold text-white mb-4">How to Explore</h2>
+      <h2 className="text-2xl font-bold text-white mb-4">{t("Title")}</h2>
       <div className="text-white/90 space-y-3">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 text-white font-bold">
-            1
+        {steps.map((stepKey, i) => (
+          <div key={stepKey} className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 text-white font-bold">
+              {i + 1}
+            </div>
+            <p>{t(stepKey)}</p>
           </div>
-          <p>
-            <strong>Choose your context:</strong> Compare calm, wind and waves, storms, and vessel noise.
-          </p>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 text-white font-bold">
-            2
-          </div>
-          <p>
-            <strong>Pick your listener:</strong> Switch among harbor seal, bottlenose dolphin, and killer whale.
-          </p>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 text-white font-bold">
-            3
-          </div>
-          <p>
-            <strong>Select a sound source:</strong> Test fish and marine mammal sounds across listeners.
-          </p>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 text-white font-bold">
-            4
-          </div>
-          <p>
-            <strong>Observe results:</strong> Focus on relative range changes as noise conditions shift.
-          </p>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -263,6 +271,7 @@ function Footer() {
 
 export default function About() {
   const { copy: heroCopy } = usePanelCopy("About Hero");
+  const { copy: projectCopy } = usePanelCopy("About the Project");
 
   return (
     <div className="relative w-full min-h-screen overflow-auto">
@@ -294,7 +303,7 @@ export default function About() {
             to="/app"
             className="inline-flex items-center gap-2 mt-6 mx-auto px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold transition-colors"
           >
-            Explore
+            {heroCopy["Explore CTA"] || "Explore"}
           </Link>
         </div>
 
@@ -305,10 +314,12 @@ export default function About() {
             <div className="flex flex-col items-center">
               <img
                 src={harborSealImage}
-                alt="Sprouts the harbor seal"
+                alt={projectCopy["Sprouts caption"] || "Sprouts the harbor seal"}
                 className="w-52 h-52 rounded-full object-cover border-4 border-cyan-300/70 shadow-xl"
               />
-              <p className="mt-3 text-white/90 text-sm italic">Sprouts the harbor seal</p>
+              <p className="mt-3 text-white/90 text-sm italic">
+                {projectCopy["Sprouts caption"] || "Sprouts the harbor seal"}
+              </p>
             </div>
             <div className="absolute bottom-2 right-3 text-[11px] tracking-widest text-white/30">
               NMFS 23554

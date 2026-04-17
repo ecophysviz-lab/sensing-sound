@@ -125,6 +125,31 @@
   background: var(--ss-bar-cruise-ship);
 }
 
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(19, 78, 74, 0.6);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ss-surface-panel-start);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ss-surface-panel-end);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ss-surface-panel-start) rgba(19, 78, 74, 0.6);
+}
+
 /* Custom slider styles */
 input[type="range"].slider::-webkit-slider-thumb {
   appearance: none;

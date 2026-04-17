@@ -26,7 +26,7 @@ export default function Home() {
 
       <div className="flex flex-row flex-1 overflow-hidden">
         {/* LeftPanel -- desktop only */}
-        <div className="hidden md:flex w-1/4 flex-col gap-4 p-4 overflow-y-auto" style={{ minWidth: 265, minHeight: 730 }}>
+        <div className="hidden md:flex w-1/4 flex-col gap-4 p-4 overflow-y-auto overflow-x-hidden" style={{ minWidth: 265 }}>
           <ConditionSelector />
           <AudioParticipantSelector variant="listener" />
           <AudioParticipantSelector variant="source" />
