@@ -34,7 +34,7 @@ function DistancePill({ condition, distance }: { condition: AmbientCondition; di
 
   return (
     <div
-      className="absolute left-1/3 top-1/3 md:top-1/2 transform -translate-x-1/2 translate-y-16 md:translate-y-24 px-4 py-2 rounded-lg font-bold text-white text-center shadow-lg border z-10"
+      className="absolute left-1/3 top-1/3 md:top-1/2 transform -translate-x-1/2 translate-y-14 md:translate-y-20 px-4 py-2 rounded-lg font-bold text-white text-center shadow-lg border z-10"
       style={{ background: contextPillColorOpaque[condition], borderColor: "var(--ss-accent-secondary)" }}
     >
       <div className="text-[11px] uppercase tracking-wide text-white/90">{centerLabel}</div>
