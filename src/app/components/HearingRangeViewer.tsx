@@ -50,7 +50,7 @@ const hearingRanges: readonly HearingRow[] = [
   {
     key: harborSeal.id,
     highHz: 79000,
-    lowHz: 90,
+    lowHz: 40,
     source: "listener",
     participant: harborSeal,
   },

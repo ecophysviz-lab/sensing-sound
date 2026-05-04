@@ -8,7 +8,7 @@ import { useIsMobile } from "./ui/use-mobile";
 import underwaterBg from "@/assets/58cf7a0f771955415ed9a0900074952ee2c8a1f7.png";
 
 const LISTENING_SCENE_FALLBACK: Record<string, string> = {
-  "Center label": "Listening Range Distance",
+  "Center label": "Estimated detection range",
 };
 const AUDIO_PANEL_FALLBACK: Record<string, string> = {
   "Button state - muted": "Muted",
@@ -30,7 +30,10 @@ const contextPillColorOpaque: Record<AmbientCondition, string> = {
 
 function DistancePill({ condition, distance }: { condition: AmbientCondition; distance: number }) {
   const { copy: sceneCopy } = usePanelCopy("Listening Scene");
-  const centerLabel = sceneCopy["Center label"] || LISTENING_SCENE_FALLBACK["Center label"];
+  const sheetCenterLabel = sceneCopy["Center label"];
+  const centerLabel = sheetCenterLabel?.toLowerCase() === "listening range distance"
+    ? LISTENING_SCENE_FALLBACK["Center label"]
+    : sheetCenterLabel || LISTENING_SCENE_FALLBACK["Center label"];
 
   return (
     <div

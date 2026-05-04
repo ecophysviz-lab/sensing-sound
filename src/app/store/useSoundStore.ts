@@ -35,7 +35,7 @@ export const useSoundStore = create<SoundStore>()(
   persist(
     (set, get) => ({
       language: detectLanguage(),
-      oceanCondition: "winter",
+      oceanCondition: "calm",
       listener: harborSeal,
       source: rockfish,
       mobileView: "scene",

@@ -3,9 +3,9 @@ import { allParticipants } from "../data/participants";
 
 export function formatDistance(dist: number): string {
   if (dist >= 1) {
-    return `${dist.toFixed(2)} km`;
+    return `${Math.round(dist)} km`;
   }
-  return `${(dist * 1000).toFixed(0)} m`;
+  return `${Math.round(dist * 1000)} m`;
 }
 
 export function formatAudioTime(seconds: number): string {
